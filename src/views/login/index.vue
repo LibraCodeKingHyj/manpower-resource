@@ -174,7 +174,7 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
-  background: url("~@/assets/common/login.jpg") no-repeat;
+  background: url("~@/assets/common/login.jpg") no-repeat center center;
   background-size: cover;
   .el-input {
     display: inline-block;
@@ -205,7 +205,7 @@ $cursor: #fff;
     color: #454545;
   }
   .el-form-item__error {
-    color: rgb(228, 35, 35);
+    color: rgb(255, 255, 255);
   }
   .loginBtn {
     background: #407ffe;
@@ -261,7 +261,7 @@ $light_gray: #eee;
 
     .title {
       font-size: 40px;
-      color: rgb(102, 89, 84);
+      color: rgb(248, 240, 237);
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;
