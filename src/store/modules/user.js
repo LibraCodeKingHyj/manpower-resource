@@ -17,17 +17,19 @@ const actions = {
   //调用登录接口
   async login(context,data){
     // //调用接口
-    // const res = await login(data)
-    // //axios默认加了一层data
-    // if (res.data.success) {
-    //   // success为true表示登录成功
-    //   context.commit('setToken', res.data.data)
-    // }
-    login(data).then(res=>{
-      if (res.data.success) {
-        context.commit('setToken', res.data.data)
-      }
-    })
+    const res = await login(data)
+    //res就是登录后拿到的信息
+    //axios默认加了一层data
+    if (res.data.success) {
+      // success为true表示登录成功
+      context.commit('setToken', res.data.data)
+    }
+    //.then写法
+    // login(data).then(res=>{
+    //   if (res.data.success) {
+    //     context.commit('setToken', res.data.data)
+    //   }
+    // })
   }
 }
 export default {
