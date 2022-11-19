@@ -33,6 +33,7 @@
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
+        <!-- native 可以让事件绑定到组件内部的元素上，当dom元素出发了这个事件 -->
         <el-input
           :key="passwordType"
           ref="password"
@@ -132,8 +133,11 @@ export default {
       });
     },
     handleLogin() {
+      //手动检验
       this.$refs.loginForm.validate((valid) => {
+        // valid 是否成功
         if (valid) {
+          //校验成功
           this.loading = true;
           this.$store
             .dispatch("user/login", this.loginForm)
