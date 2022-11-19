@@ -20,22 +20,45 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   // 成功的回调
   (response) => {
+    // 银行卡插入atm机成功
+    // response 是axios处理后的结果
     const { success, data, message } = response.data
-    //要根据success的成功与否决定接下来的操作
-    if (success) {
+    // 要根据success的成功与否决定接下来的操作
+    if (success) { 
+      // 取钱成功
+      //业务处理成功
       return data
     } else {
-      //业务错误，进入catch
-      Message.error(message) //提示错误消息
-      return Promise.reject(new Error(message))//因为没有错误对象，人为提示错误信息
+      // 钱不够
+      // 业务错误，进入catch
+      Message.error(message) // 提示错误消息
+      return Promise.reject(new Error(message))// 因为没有错误对象，人为提示错误信息
     }
   },
   // 失败的回调
   (error) => {
-    //失败提示错误信息
+    // 银行卡插入atm机失败
+    // error 是axios处理后的错误对象
+    // 失败提示错误信息
     Message.error(error.Message)
-    //返回执行错误，让当前的执行链跳出成功，让请求直接进入catch
+    // 返回执行错误，让当前的执行链跳出成功，让请求直接进入catch
     return Promise.reject(error)
   }
 )
+
 export default service
+
+/* 
+  响应拦截器{
+    成功回调(response){
+      // 接口相应成功
+        判断data里面的success是否成功
+        成功：返回数据
+        失败：抛出错误对象
+    }
+    失败的回调(error){
+      //接口调用失败
+      返回错误对象
+    }
+  }
+*/
