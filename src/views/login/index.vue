@@ -9,20 +9,20 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">
-          <img src="@/assets/common/login-logo.png" alt="" />
-        </h3>
+        <h2 class="title">
+          偶像练习生后台管理系统
+        </h2>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="mobile">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
+          v-model="loginForm.mobile"
+          placeholder="手鸡号"
+          name="mobile"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -38,7 +38,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -69,36 +69,42 @@
 </template>
 
 <script>
-import { validUsername } from "@/utils/validate";
+//引入校验手机号的函数
+import { validMobile } from "@/utils/validate";
 
 export default {
   name: "Login",
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error("Please enter the correct user name"));
-      } else {
-        callback();
-      }
-    };
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error("The password can not be less than 6 digits"));
-      } else {
-        callback();
-      }
+    // vaildator 是自定义校验器
+    //rule 用不打破
+    //value 要娇艳的值
+    //校验后的调用回调函数 不通过往callback传入错误参数
+    const validdateMobile = (rule, value, callback) => {
+      // if (validMobile(value)) {
+      //   callback();
+      // } else {
+      //   callback(new Error("手机号格式不正确"));
+      // }
+      validMobile(value) ? callback() : callback(new Error("手机号格式不正确"));
     };
     return {
+      // 表单校验的条件
+      // 表单绑定的值
+      // 表单绑定的校验规则
+      // 表单每一项绑定娇艳的字段
       loginForm: {
-        username: "admin",
-        password: "111111",
+        mobile: "13800000002",
+        password: "123456",
       },
       loginRules: {
-        username: [
-          { required: true, trigger: "blur", validator: validateUsername },
+        mobile: [
+          //trigger 校验的触发方式
+          { required: true, trigger: "blur", message: "手机号不能为空" },
+          { validator: validdateMobile, trigger: "blur" },
         ],
         password: [
-          { required: true, trigger: "blur", validator: validatePassword },
+          { required: true, trigger: "blur", message: "密码不能为空" },
+          { trigger: "blur", min: 6, max: 16, message: "密码长度为6-16位之间" },
         ],
       },
       loading: false,
@@ -164,8 +170,8 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
-  background-image: url("~@/assets/common/login.jpg");
-  background-position: center;
+  background: url("~@/assets/common/login.jpg") no-repeat;
+  background-size: cover;
   .el-input {
     display: inline-block;
     height: 47px;
@@ -195,7 +201,7 @@ $cursor: #fff;
     color: #454545;
   }
   .el-form-item__error {
-    color: #fff;
+    color: rgb(228, 35, 35);
   }
   .loginBtn {
     background: #407ffe;
@@ -250,8 +256,8 @@ $light_gray: #eee;
     position: relative;
 
     .title {
-      font-size: 26px;
-      color: $light_gray;
+      font-size: 40px;
+      color: rgb(102, 89, 84);
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;
