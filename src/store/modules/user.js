@@ -20,10 +20,13 @@ const actions = {
     const res = await login(data)
     //res就是登录后拿到的信息
     //axios默认加了一层data
-    if (res.data.success) {
-      // success为true表示登录成功
-      context.commit('setToken', res.data.data)
-    }
+
+    // if (data.success) {
+    //   // success为true表示登录成功
+    //   context.commit('setToken', res.data.data)
+    // }
+    // 当能走到这里 就证明数据已经获取成功 在王莹拦截器已经验证，所以直接commit
+    context.commit('setToken', res)
     //.then写法
     // login(data).then(res=>{
     //   if (res.data.success) {
