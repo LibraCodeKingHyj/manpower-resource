@@ -1,6 +1,6 @@
 module.exports = {
   // 项目标题
-  title: 'Vue Admin Template',
+  title: '只因哥后台管理系统',
 
   /**
    * @type {boolean} true | false
