@@ -12,7 +12,7 @@ import 'nprogress/nprogress.css' // 引入进入条样式
 // naxt(地址)跳转到某个地址
 
 // 定义白名单地址
-const whiteList = ['/login', '/login']
+const whiteList = ['/login', '/404']
 router.beforeEach((to, from, next) => {
   nProgress.start() // 开启进度条
   if (store.getters.token) {
@@ -26,7 +26,7 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     // 无token
-    if (whiteList.some(to.path)) {
+    if (whiteList.includes(to.path)) {
       // 要去的地址在白名单
       next()
     } else {
