@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
+import store from '@/store'
 // 创建axios实例
 const service = axios.create({
   // 当执行 npm run dev => .env.development => /api => 跨域代理
@@ -10,12 +11,21 @@ const service = axios.create({
     页面一定有基础地址
   */
 })
-// 请求拦截器(成功和失败的回调函数)
+// 请求拦截器(成功和失败的回调函数)------>就是为了对请求配置(config)进行加工
 service.interceptors.request.use(
   // 成功的回调
-  (config) => { return config },
+  // token注入
+  config => {
+    // 判断token是否存在
+    if (store.getters.token) {
+      // 存在的话进行token注入
+      config.headers['Authorization'] = `Bearer ${store.getters.token}`
+    }
+    // 返回config配置
+    return config
+  },
   // 失败的回调函数
-  () => { }
+  error => Promise.reject(error)
 )
 // 响应拦截器
 service.interceptors.response.use(
