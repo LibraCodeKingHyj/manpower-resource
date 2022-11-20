@@ -1,7 +1,8 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { login } from '@/api/user'
+import { login, getUserInfo } from '@/api/user'
 const state = {
-  token: getToken() // 设置token ,初始化vuex的时候，从缓存中读取token
+  token: getToken(), // 设置token ,初始化vuex的时候，从缓存中读取token
+  userInfo: {} // 为什么定义空对象？ 为了防止在getters里面读info里面的变量时会报错
 }
 const mutations = {
   setToken(state, token) {
@@ -11,6 +12,12 @@ const mutations = {
   removeToken(state) {
     state.token = null // 将缓存置空
     removeToken()// 将token同步给缓存
+  },
+  setUserInfo(state, userInfo) {
+    state.userInfo = userInfo
+  },
+  removeUserInfo(state) {
+    state.userInfo = {}
   }
 }
 const actions = {
@@ -25,7 +32,7 @@ const actions = {
     //   // success为true表示登录成功
     //   context.commit('setToken', res.data.data)
     // }
-    // 当能走到这里 就证明数据已经获取成功 在王莹拦截器已经验证，所以直接commit
+    // 当能走到这里 就证明数据已经获取成功 在响应拦截器已经验证，所以直接commit
     context.commit('setToken', res)
     // .then写法
     // login(data).then(res=>{
@@ -33,6 +40,12 @@ const actions = {
     //     context.commit('setToken', res.data.data)
     //   }
     // })
+  },
+  // 调用获取用户信息的接口
+  async getUserInfo(context) {
+    const res = await getUserInfo()
+    context.commit('setUserInfo', res)
+    return res // 为什么返回res 为了给后期做权限的时候用
   }
 }
 export default {
