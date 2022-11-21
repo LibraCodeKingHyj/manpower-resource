@@ -13,7 +13,7 @@ import 'nprogress/nprogress.css' // 引入进入条样式
 
 // 定义白名单地址
 const whiteList = ['/login', '/404']
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   nProgress.start() // 开启进度条
   if (store.getters.token) {
     // 有token
@@ -22,6 +22,12 @@ router.beforeEach((to, from, next) => {
       next('/')
     } else {
       // 其他页面放行
+      // 有token且不是登录页
+      // 如果当前vuex中有用户的id 标识已经有资料了，就不用获取了 ，没有就获取
+      if (!store.state.user.userInfo.userId) {
+        await store.dispatch('user/getUserInfo')
+      }
+      // await后面的代码都是异步的 ，所以一定会等信息获取完成之后再执行next
       next()
     }
   } else {
