@@ -19,7 +19,16 @@ export function getUserInfo() {
     method: 'POST'
   })
 }
-
+/** *
+ *
+ * 获取用户的基本信息  现在写它 完全是为了显示头像
+ * **/
+export function getUserDetailById(id) {
+  return request({
+    // {}或者冒号:这种形式，代表表达是一个动态路径的url
+    url: `/sys/user/${id}`
+  })
+}
 export function logout() {
 
 }

@@ -1,5 +1,5 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { login, getUserInfo } from '@/api/user'
+import { login, getUserInfo, getUserDetailById } from '@/api/user'
 const state = {
   token: getToken(), // 设置token ,初始化vuex的时候，从缓存中读取token
   userInfo: {} // 为什么定义空对象？ 为了防止在getters里面读info里面的变量时会报错
@@ -43,9 +43,10 @@ const actions = {
   },
   // 调用获取用户信息的接口
   async getUserInfo(context) {
-    const res = await getUserInfo()
-    context.commit('setUserInfo', res)
-    return res // 为什么返回res 为了给后期做权限的时候用
+    const res = await getUserInfo() // 不包含头像信息
+    const baseInfo = await getUserDetailById(res.userId) // 头像信息
+    context.commit('setUserInfo', { ...res, ...baseInfo })
+    // return res // 为什么返回res 为了给后期做权限的时候用
   }
 }
 export default {
