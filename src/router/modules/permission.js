@@ -2,6 +2,7 @@
 import Layout from '@/layout'
 export default {
   path: '/permission',
+  name: 'permission',
   component: Layout,
   children: [{
     // path为空  表示/employees路由的默认路由
