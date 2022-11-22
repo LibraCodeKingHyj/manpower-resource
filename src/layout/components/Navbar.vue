@@ -8,14 +8,14 @@
 
     <div class="app-breadcrumb">
       山东省济宁市梁山县韩垓镇蔡徐村农业合作社
-      <span class="breadBtn">体验版</span>
+      <span class="breadBtn">只因版</span>
     </div>
     <!-- <breadcrumb class="breadcrumb-container" /> -->
 
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="staffPhoto" class="user-avatar">
+          <img v-imagerror="defaultImg" :src="staffPhoto" class="user-avatar">
           <span class="name">{{ name }}</span>
           <i class="el-icon-caret-bottom" style="color: #fff" />
         </div>
@@ -44,6 +44,11 @@ export default {
   components: {
     // Breadcrumb,
     Hamburger
+  },
+  data() {
+    return {
+      defaultImg: require('@/assets/common/logo.png')
+    }
   },
   computed: {
     ...mapGetters(['sidebar', 'name', 'staffPhoto'])
