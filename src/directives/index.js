@@ -10,7 +10,7 @@ import Vue from 'vue'
 //     }
 //   }
 // }
-const directiveList = [
+const directives =
   {
     imagerror: {
       // 会在当前的dom元素插入到节点之后执行
@@ -23,8 +23,6 @@ const directiveList = [
       }
     }
   }
-]
-directiveList.forEach(item => {
-  Vue.directive(Object.keys(item)[0], Object.values(item)[0])
-})
+
+Object.keys(directives).forEach(key => Vue.directive(key, directives[key]))
 // Vue.directive('imagerror', directiveList['imagerror'])
