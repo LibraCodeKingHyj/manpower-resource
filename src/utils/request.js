@@ -1,6 +1,9 @@
 import axios from 'axios'
-import { Message } from 'element-ui'
 import store from '@/store'
+import router from '@/router'
+import { Message } from 'element-ui'
+import { getTimeStamp } from '@/utils/auth'
+const TimeOut = 5 * 1000
 // 创建axios实例
 const service = axios.create({
   // 当执行 npm run dev => .env.development => /api => 跨域代理
@@ -18,6 +21,13 @@ service.interceptors.request.use(
   config => {
     // 判断token是否存在
     if (store.getters.token) {
+      // 判断token是否超时
+      if (checkTimeOut()) {
+        // token
+        store.dispatch('user/logout')
+        router.push('/login')
+        return Promise.reject(new Error('身份信息过期'))
+      }
       // 存在的话进行token注入
       config.headers['Authorization'] = `Bearer ${store.getters.token}`
     }
@@ -58,6 +68,11 @@ service.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+// 检查token是否超时的方法
+function checkTimeOut() {
+  return Date.now() - getTimeStamp() > TimeOut
+}
 
 export default service
 

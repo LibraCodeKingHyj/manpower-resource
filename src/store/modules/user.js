@@ -1,4 +1,4 @@
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
 import { login, getUserInfo, getUserDetailById } from '@/api/user'
 const state = {
   token: getToken(), // 设置token ,初始化vuex的时候，从缓存中读取token
@@ -40,6 +40,9 @@ const actions = {
     //     context.commit('setToken', res.data.data)
     //   }
     // })
+
+    // 登录的时候设置时间戳
+    setTimeStamp() // 设置当前的时间戳
   },
   // 调用获取用户信息的接口
   async getUserInfo(context) {
@@ -47,6 +50,13 @@ const actions = {
     const baseInfo = await getUserDetailById(res.userId) // 头像信息
     context.commit('setUserInfo', { ...res, ...baseInfo })
     // return res // 为什么返回res 为了给后期做权限的时候用
+  },
+  // 登出的action
+  logout(context) {
+    // 删除token
+    context.commit('removeToken') // 不仅仅删除了vuex中的 还删除了缓存中的
+    // 删除用户资料
+    context.commit('removeUserInfo') // 删除用户信息
   }
 }
 export default {

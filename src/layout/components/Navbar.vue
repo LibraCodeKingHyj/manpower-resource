@@ -59,8 +59,7 @@ export default {
     },
     logout() {
       // 调用mutuation里面的清空token方法与人员信息
-      this.$store.commit('user/removeToken')
-      this.$store.commit('user/removeUserInfo')
+      this.$store.dispatch('user/logout')
       this.$router.push(`/login`)
     }
   }
