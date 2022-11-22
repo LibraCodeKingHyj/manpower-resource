@@ -9,7 +9,8 @@ export default {
     path: '',
     component: () => import('@/views/attendances'),
     meta: {
-      title: '考勤' // 使用title是因为左侧导航读取了这里的title属性
+      title: '考勤', // 使用title是因为左侧导航读取了这里的title属性
+      icon:'skill'
     }
   }]
 }
