@@ -3,7 +3,7 @@ import store from '@/store'
 import router from '@/router'
 import { Message } from 'element-ui'
 import { getTimeStamp } from '@/utils/auth'
-const TimeOut = 5 * 1000
+const TimeOut = 1.5 * 3600 * 1000
 // 创建axios实例
 const service = axios.create({
   // 当执行 npm run dev => .env.development => /api => 跨域代理
@@ -60,11 +60,18 @@ service.interceptors.response.use(
   },
   // 失败的回调
   (error) => {
-    // 银行卡插入atm机失败
-    // error 是axios处理后的错误对象
-    // 失败提示错误信息
-    Message.error(error.Message)
-    // 返回执行错误，让当前的执行链跳出成功，让请求直接进入catch
+    // error信息里面有response的对象
+    if (error?.response?.data.code === 10002) {
+      // code===10002标识token超时(后端告诉我们超时了)
+      store.dispatch('user/logout')
+      router.push('/login')
+    } else {
+      // 银行卡插入atm机失败
+      // error 是axios处理后的错误对象
+      // 失败提示错误信息
+      Message.error(error.message)
+      // 返回执行错误，让当前的执行链跳出成功，让请求直接进入catch
+    }
     return Promise.reject(error)
   }
 )
