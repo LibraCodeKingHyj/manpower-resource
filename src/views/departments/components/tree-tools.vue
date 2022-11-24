@@ -10,15 +10,15 @@
         <el-col>{{ treeNode.manager }}</el-col>
         <el-col>
           <!-- 下拉菜单 element -->
-          <el-dropdown>
+          <el-dropdown @command="operateDepts">
             <span>
               操作<i class="el-icon-arrow-down" />
             </span>
             <!-- 下拉菜单 -->
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>添加子部门</el-dropdown-item>
-              <el-dropdown-item v-if="!isRoot">编辑部门</el-dropdown-item>
-              <el-dropdown-item v-if="!isRoot">删除部门</el-dropdown-item>
+              <el-dropdown-item command="add">添加子部门</el-dropdown-item>
+              <el-dropdown-item v-if="!isRoot" command="edit">编辑部门</el-dropdown-item>
+              <el-dropdown-item v-if="!isRoot" command="del">删除部门</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { delDpartments } from '@/api/departments'
 export default {
   props: {
     treeNode: {
@@ -37,6 +38,26 @@ export default {
     isRoot: {
       type: Boolean,
       default: false
+    }
+  },
+  methods: {
+    operateDepts(type) {
+      switch (type) {
+        case 'add':
+          this.$bus.$emit('addDept', this.treeNode)
+          break
+        case 'edit':
+          // 编辑
+          break
+        case 'del':
+          this.$confirm('你确定删除该部门组织吗').then(() => {
+            return delDpartments(this.treeNode.id)
+          }).then(() => {
+            // 删除成功重新获取
+            this.$bus.$emit('delDepts')
+            this.$message({ message: '删除成功', type: 'success' })
+          })
+      }
     }
   }
 }

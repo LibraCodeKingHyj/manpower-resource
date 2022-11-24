@@ -28,5 +28,8 @@ new Vue({
   el: '#app',
   router,
   store,
+  beforeCreate() {
+    Vue.prototype.$bus = this // 事件总线
+  },
   render: h => h(App)
 })

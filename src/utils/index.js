@@ -115,3 +115,23 @@ export function param2Obj(url) {
   })
   return obj
 }
+// 转换为树形结构的函数
+export function tranListToTreeData(list, id) {
+  /*
+    1.在list中找到pid是id的那一项，那一项就是要找到的子节点
+    2.通过递归再找一下儿子
+    3.在找到的children中可能找完了，那么他的长度为空，所以需要判断一下
+    4.然后将找到的对象查到数组里面就ok了
+  */
+  const arr = []
+  list.forEach(item => {
+    if (item.pid === id) {
+      const children = tranListToTreeData(list, item.id)
+      if (children.length) {
+        item.children = children
+      }
+      arr.push(item)
+    }
+  })
+  return arr
+}
