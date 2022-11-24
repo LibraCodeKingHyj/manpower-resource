@@ -14,7 +14,8 @@
       </el-card>
     </div>
     <!-- 添加弹层 -->
-    <add-dept :dialog-visible="showDialog" :tree-node="node" />
+    <!-- sync相当于传入值的时候又传入了自定义事件@update事件 这个参数可以进行接收值对值进行修改 -->
+    <add-dept :show-dialog.sync="showDialog" :tree-node="node" />
   </div>
 </template>
 
@@ -49,6 +50,9 @@ export default {
     this.$bus.$on('addDept', (node) => {
       this.showDialog = true
       this.node = node
+    })
+    this.$bus.$on('addDepts', () => {
+      this.getDepartments()
     })
   },
   methods: {

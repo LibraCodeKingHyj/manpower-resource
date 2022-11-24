@@ -1,6 +1,6 @@
 <template>
   <!-- 新增部门的弹层 -->
-  <el-dialog title="新增部门" :visible="dialogVisible">
+  <el-dialog title="新增部门" :visible="showDialog" @close="btnCancel">
     <!-- 表单组件  el-form   label-width设置label的宽度   -->
     <!-- 匿名插槽 -->
     <el-form ref="deptForm" label-width="120px" :model="formData" :rules="rules">
@@ -23,7 +23,10 @@
           v-model="formData.manager"
           style="width: 80%"
           placeholder="请选择"
-        />
+          @focus="getEmployeeSimple"
+        >
+          <el-option v-for="item in people" :key="item.id" :label="item.username" :value="item.username" />
+        </el-select>
       </el-form-item>
       <el-form-item label="部门介绍" prop="introduce">
         <el-input
@@ -40,16 +43,17 @@
       <!-- 列被分为24 -->
       <el-col :span="6">
         <el-button type="primary" size="small" @click.native="btnOk">确定</el-button>
-        <el-button size="small">取消</el-button>
+        <el-button size="small" @click.native="btnCancel">取消</el-button>
       </el-col>
     </el-row>
   </el-dialog>
 </template>
 <script>
-import { getDepartments } from '@/api/departments'
+import { getDepartments, addDpartments } from '@/api/departments'
+import { getEmployeeSimple } from '@/api/employees'
 export default ({
   props: {
-    dialogVisible: {
+    showDialog: {
       type: Boolean
     },
     treeNode: {
@@ -99,14 +103,29 @@ export default ({
           { required: true, message: '部门介绍不能为空', trigger: 'blur' },
           { min: 1, max: 300, message: '部门介绍长度为1-300个字符', trigger: 'blur' }
         ]
-      }
+      },
+      people: []
     }
   },
   methods: {
     btnOk() {
-      this.$refs.deptForm.validate(() => {
-
+      this.$refs.deptForm.validate(async(isOk) => {
+        if (isOk) {
+          // 将这个pid设置为点击节点的id
+          await addDpartments({ ...this.formData, pid: this.treeNode.id })
+          // this.$refs.deptForm.resetFields()// 重置表单
+          this.$bus.$emit('addDepts') // 让父组件获取最新数据
+          this.$emit('update:showDialog', false) // 关闭弹窗 会触发el-dialog的close事件 ，所以不需要重置数据
+        }
       })
+    },
+    // 需要监听el-dialog的close事件，所以才能点击❌
+    btnCancel() {
+      this.$refs.deptForm.resetFields()
+      this.$emit('update:showDialog', false)
+    },
+    async getEmployeeSimple() {
+      this.people = await getEmployeeSimple()
     }
   }
 })
