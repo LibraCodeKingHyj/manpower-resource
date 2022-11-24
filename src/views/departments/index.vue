@@ -14,7 +14,7 @@
       </el-card>
     </div>
     <!-- 添加弹层 -->
-    <add-dept :dialog-visible="showDialog" />
+    <add-dept :dialog-visible="showDialog" :tree-node="node" />
   </div>
 </template>
 
@@ -35,7 +35,7 @@ export default {
         label: 'name' // 表示 从这个属性显示内容
       },
       company: { },
-      showDialog: false,
+      showDialog: false, // 添加弹窗
       node: null
     }
   },
@@ -55,7 +55,7 @@ export default {
     // 获取部门列表
     async getDepartments() {
       const result = await getDepartments()
-      this.company = { name: result.companyName, manager: '负责人' }
+      this.company = { name: result.companyName, manager: '负责人', id: '' } // id为空解决头部无法判断有无根级部门
       this.departs = tranListToTreeData(result.depts, '') // 需要将其转化成树形结构
     }
   }
