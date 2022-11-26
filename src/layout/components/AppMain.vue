@@ -24,6 +24,8 @@ export default {
   width: 100%;
   position: relative;
   overflow: hidden;
+  background-image: url("~@/assets/common/login.jpg");
+  background-size: cover;
 }
 .fixed-header+.app-main {
   padding-top: 50px;
