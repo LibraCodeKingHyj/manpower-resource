@@ -33,3 +33,11 @@ export function getRoleDetail(id) {
     url: `/sys/role/${id}`
   })
 }
+// 添加角色
+export function addRole(data) {
+  return request({
+    url: '/sys/role',
+    method: 'post',
+    data
+  })
+}

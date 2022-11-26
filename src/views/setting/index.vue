@@ -11,6 +11,7 @@
                 icon="el-icon-plus"
                 size="small"
                 type="primary"
+                @click="showDialog = true"
               >新增角色</el-button>
             </el-row>
             <!-- 表格 -->
@@ -104,7 +105,7 @@
       </el-card>
     </div>
     <!--  -->
-    <el-dialog title="编辑部门" :visible="showDialog">
+    <el-dialog :title="showTiele" :visible="showDialog" @close="btnCancel">
       <el-form ref="roleForm" :model="roleForm" :rules="rules" label-width="120px">
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="roleForm.name" />
@@ -131,7 +132,7 @@
   :current-page="当前页码数"
   @current-change="页面变化的事件"
 */
-import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole, addRole } from '@/api/setting'
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -154,7 +155,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['companyId'])
+    ...mapGetters(['companyId']),
+    showTiele() {
+      return this.roleForm.id ? '编辑' : '新增'
+    }
   },
   created() {
     this.getRoleList()
@@ -191,9 +195,17 @@ export default {
       this.showDialog = true
     },
     btnCancel() {
+      this.roleForm = {
+        name: '',
+        description: ''
+      }
+      this.$delete(this.roleForm, 'id')
+      // 移除校验
+      this.$refs.roleForm.resetFields()
       this.showDialog = false
     },
     async btnok() {
+      // await 只能处理成功，处理失败需要用try catch
       // await this.$refs.roleForm.validate() // validate不传入参数返回promise对象可以使用await
       try {
         await this.$refs.roleForm.validate()
@@ -202,6 +214,7 @@ export default {
           await updateRole(this.roleForm)
         } else {
           // 新增
+          await addRole(this.roleForm)
         }
         this.getRoleList()
         this.$message.success('更新成功')
