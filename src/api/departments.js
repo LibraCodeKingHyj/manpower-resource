@@ -20,3 +20,19 @@ export function addDpartments(data) {
     data
   })
 }
+// 编辑，获取点击部门的信息
+export function getDepartDetail(id) {
+  return request({
+    url: `/company/department/${id}`
+  })
+}
+/*
+  编辑：编辑的提交
+*/
+export function updateDepartments(data) {
+  return request({
+    url: `/company/department/${data.id}`,
+    method: 'put',
+    data
+  })
+}

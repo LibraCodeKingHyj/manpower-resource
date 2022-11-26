@@ -43,7 +43,8 @@ module.exports = {
     proxy: {
       '/api': { // 匹配所有以 '/api1'开头的请求路径
         // 如果触发了代理，并且配置了target，那么协议+域名+端口号就会被替换成target
-        target: 'http://ihrm-java.itheima.net/', // 代理目标的基础路径
+        // target: 'http://ihrm-java.itheima.net/', // 代理目标的基础路径
+        target: 'http://ihrm.itheima.net/', // 代理目标的基础路径
         changeOrigin: true
       }
     }

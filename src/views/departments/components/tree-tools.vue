@@ -48,6 +48,7 @@ export default {
           break
         case 'edit':
           // 编辑
+          this.$bus.$emit('editDepts', this.treeNode)
           break
         case 'del':
           this.$confirm('你确定删除该部门组织吗').then(() => {
