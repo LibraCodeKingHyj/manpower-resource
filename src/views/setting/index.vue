@@ -34,7 +34,7 @@
               <el-table-column label="操作" align="center">
                 <template v-slot="{ row }">
                   <el-button size="small" type="success">分配权限</el-button>
-                  <el-button size="small" type="primary">编辑</el-button>
+                  <el-button size="small" type="primary" @click="editRole(row.id)">编辑</el-button>
                   <el-button
                     size="small"
                     type="danger"
@@ -103,6 +103,23 @@
         </el-tabs>
       </el-card>
     </div>
+    <!--  -->
+    <el-dialog title="编辑部门" :visible="showDialog">
+      <el-form ref="roleForm" :model="roleForm" :rules="rules" label-width="120px">
+        <el-form-item label="角色名称" prop="name">
+          <el-input v-model="roleForm.name" />
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input v-model="roleForm.description" />
+        </el-form-item>
+      </el-form>
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="8">
+          <el-button size="small" @click="btnCancel">取消</el-button>
+          <el-button size="small" type="primary" @click="btnok">确定</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -114,7 +131,7 @@
   :current-page="当前页码数"
   @current-change="页面变化的事件"
 */
-import { getRoleList, getCompanyInfo, deleteRole } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole } from '@/api/setting'
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -125,7 +142,15 @@ export default {
         pagesize: 5,
         total: 0
       },
-      formData: {}
+      formData: {},
+      showDialog: false,
+      roleForm: {
+        description: '',
+        name: ''
+      },
+      rules: {
+        name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }]
+      }
     }
   },
   computed: {
@@ -157,6 +182,30 @@ export default {
         await deleteRole(id)
         this.getRoleList()
         this.$message.success('删除角色成功')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async editRole(id) {
+      this.roleForm = await getRoleDetail(id)
+      this.showDialog = true
+    },
+    btnCancel() {
+      this.showDialog = false
+    },
+    async btnok() {
+      // await this.$refs.roleForm.validate() // validate不传入参数返回promise对象可以使用await
+      try {
+        await this.$refs.roleForm.validate()
+        if (this.roleForm.id) {
+          // 只有校验通过才能执行
+          await updateRole(this.roleForm)
+        } else {
+          // 新增
+        }
+        this.getRoleList()
+        this.$message.success('更新成功')
+        this.showDialog = false
       } catch (error) {
         console.log(error)
       }
