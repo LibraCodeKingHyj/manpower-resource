@@ -23,7 +23,8 @@ Vue.use(ElementUI, { locale })
 // Vue.use(ElementUI)
 
 Vue.config.productionTip = false
-
+import Component from '@/components'
+Vue.use(Component)
 new Vue({
   el: '#app',
   router,
