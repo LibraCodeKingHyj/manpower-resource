@@ -11,14 +11,24 @@
         <el-date-picker v-model="formData.timeOfEntry" placeholder="请选择入职时间" />
       </el-form-item>
       <el-form-item style="width:50%" label="聘用形式" prop="formOfEmployment">
-        <el-select v-model="formData.formOfEmployment" placeholder="请选择聘用形式" />
+        <el-select v-model="formData.formOfEmployment" placeholder="请选择聘用形式">
+          <el-option v-for="item in EmployeeEnum.hireType" :key="item.id" :label="item.value" :value="item.id" />
+        </el-select>
       </el-form-item>
       <el-form-item style="width:50%" label="工号" prop="workNumber">
         <el-input v-model="formData.workNumber" placeholder="请输入工号" />
       </el-form-item>
       <el-form-item style="width:50%" label="部门" prop="departmentName">
         <el-input v-model="formData.departmentName" placeholder="请输入部门" @focus="getDepartments" />
-        <el-tree v-if="showTree" v-loading="loading" :data="treeData" :props="{label:'name'}" :default-expand-all="true" />
+        <div v-if="showTree" class="tree-box">
+          <el-tree
+            v-loading="loading"
+            :data="treeData"
+            :props="{label:'name'}"
+            :default-expand-all="true"
+            @node-click="selectNode"
+          />
+        </div>
       </el-form-item>
       <el-form-item style="width:50%" label="转正时间" prop="correctionTime">
         <el-date-picker v-model="formData.correctionTime" placeholder="请选择转正时间" />
@@ -40,6 +50,7 @@
 <script>
 import { getDepartments } from '@/api/departments'
 import { tranListToTreeData } from '@/utils'
+import EmployeeEnum from '@/api/constant/employees'
 export default {
   props: {
     showDialog: {
@@ -69,26 +80,35 @@ export default {
         ],
         formOfEmployment: [{ required: true, message: '聘用形式不能为空', trigger: 'blur' }],
         workNumber: [{ required: true, message: '工号不能为空', trigger: 'blur' }],
+        // 为change是因为选择的时候失焦，不让他报错
         departmentName: [{ required: true, message: '部门不能为空', trigger: 'change' }],
         timeOfEntry: [{ required: true, message: '入职时间', trigger: 'blur' }]
       },
       treeData: [],
       showTree: false,
-      loading: false
+      loading: false,
+      EmployeeEnum
     }
   },
   methods: {
     async getDepartments() {
-      this.showTree = true
       this.loading = true
       const { depts } = await getDepartments()
       this.treeData = tranListToTreeData(depts, '')
       this.loading = false
+      this.showTree = true
+    },
+    selectNode(node) {
+      this.formData.departmentName = node.name
+      this.showTree = false
     }
   }
 }
 </script>
 
 <style scoped>
-
+.tree-box{
+  height: 120px;
+  overflow: auto;
+}
 </style>
