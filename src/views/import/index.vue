@@ -25,17 +25,17 @@ export default {
           // key是当前的中文名 找到对应的英文名
           if (userRelations[key] === 'timeOfEntry' || userRelations[key] === 'correctionTime') {
             userInfo[userRelations[key]] = new Date(this.formatDate(item[key], '/')) // 只有这样, 才能入库
+            return
           }
           userInfo[userRelations[key]] = item[key]
         })
+        // 最终userInfo变成了全是英文
         arr.push(userInfo)
-        console.log(userInfo)
       })
       await importEmployee(arr)
       this.$message.success('导入成功')
       this.$router.back() // 回到上一页
     },
-    // 格式化excel里面的时间
     formatDate(numb, format) {
       const time = new Date((numb - 1) * 24 * 3600000 + 1)
       time.setYear(time.getFullYear() - 70)

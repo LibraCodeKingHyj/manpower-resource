@@ -9,7 +9,7 @@
         <!-- 左侧显示按钮 excel导入 excel导出 新增员工 -->
         <template #after>
           <el-button size="small" type="success" @click="$router.push('/import')">excel导入</el-button>
-          <el-button size="small" type="danger">excel导出</el-button>
+          <el-button size="small" type="danger" @click="exportData">excel导出</el-button>
           <el-button size="small" type="primary" @click="showDialog=true">新增员工</el-button>
         </template>
       </page-tools>
@@ -19,7 +19,7 @@
           <el-table-column label="序号" sortable="" type="index" />
           <el-table-column label="姓名" sortable="" prop="username" />
           <el-table-column label="工号" sortable="" prop="workNumber" />
-          <el-table-column label="手机号" sortable="" prop="mobile" />
+          <el-table-column label="手鸡号" sortable="" prop="mobile" />
           <el-table-column
             label="聘用形式"
             sortable=""
@@ -37,7 +37,7 @@
               <el-switch :value="row.enableState === 1" />
             </template>
           </el-table-column>
-          <el-table-column label="操作" sortable="" fixed="right" width="280">
+          <el-table-column label="操作" fixed="right" width="280">
             <template v-slot="{ row }">
               <el-button type="text" size="small">查看</el-button>
               <el-button type="text" size="small">转正</el-button>
@@ -131,6 +131,34 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    exportData() {
+      const headers = {
+        '姓名': 'username',
+        '手鸡号': 'mobile',
+        '聘用形式': 'formOfEmployment',
+        '入职日期': 'timeOfEntry',
+        '转正日期': 'correctionTime',
+        '工号': 'workNumber',
+        '部门': 'departmentName'
+      }
+      import('@/vendor/Export2Excel').then(async excel => {
+        const { rows } = await getEmployeeList({ page: 1, size: this.page.total })
+        excel.export_json_to_excel({
+          header: Object.keys(headers),
+          data: this.formatJSON(headers, rows),
+          filename: '🎤🕺🏀🐔'
+        })
+      })
+    },
+    formatJSON(headers, rows) {
+      // return rows.map(item => {
+      //   return Object.keys(headers).map(key => {
+      //     return item[headers[key]]
+      //   })
+      // })
+      return rows.map(item => Object.keys(headers).map(key => item[headers[key]])
+      )
     }
   }
 }
