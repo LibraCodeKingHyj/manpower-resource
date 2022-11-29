@@ -124,7 +124,7 @@ export default {
         timeOfEntry: '',
         correctionTime: ''
       }
-      this.$ref.addEmployee.resetFields()
+      this.$refs.addEmployee.resetFields()
       this.$emit('update:showDialog', false)
     }
   }

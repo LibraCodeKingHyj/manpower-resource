@@ -8,7 +8,7 @@
         </template>
         <!-- 左侧显示按钮 excel导入 excel导出 新增员工 -->
         <template #after>
-          <el-button size="small" type="success">excel导入</el-button>
+          <el-button size="small" type="success" @click="$router.push('/import')">excel导入</el-button>
           <el-button size="small" type="danger">excel导出</el-button>
           <el-button size="small" type="primary" @click="showDialog=true">新增员工</el-button>
         </template>
@@ -19,6 +19,7 @@
           <el-table-column label="序号" sortable="" type="index" />
           <el-table-column label="姓名" sortable="" prop="username" />
           <el-table-column label="工号" sortable="" prop="workNumber" />
+          <el-table-column label="手机号" sortable="" prop="mobile" />
           <el-table-column
             label="聘用形式"
             sortable=""
