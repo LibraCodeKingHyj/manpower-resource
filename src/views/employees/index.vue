@@ -76,6 +76,7 @@
 import { getEmployeeList, delEmployee } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees'
 import AddEmployee from './components/addEmployee.vue'
+import { formatDate } from '@/filters'
 export default {
   components: {
     AddEmployee
@@ -142,23 +143,32 @@ export default {
         '工号': 'workNumber',
         '部门': 'departmentName'
       }
+      const multiHeader = [['姓名', '主要信息', '', '', '', '', '部门']]
+      const merges = ['A1:A2', 'B1:F1', 'G1:G2']
       import('@/vendor/Export2Excel').then(async excel => {
         const { rows } = await getEmployeeList({ page: 1, size: this.page.total })
         excel.export_json_to_excel({
           header: Object.keys(headers),
           data: this.formatJSON(headers, rows),
-          filename: '🎤🕺🏀🐔'
+          filename: '🎤🕺🏀🐔',
+          multiHeader, // 头部
+          merges // 合并 从左到右直接覆盖
         })
       })
     },
     formatJSON(headers, rows) {
-      // return rows.map(item => {
-      //   return Object.keys(headers).map(key => {
-      //     return item[headers[key]]
-      //   })
-      // })
-      return rows.map(item => Object.keys(headers).map(key => item[headers[key]])
-      )
+      return rows.map(item => {
+        return Object.keys(headers).map(key => {
+          if (headers[key] === 'timeOfEntry' || headers[key] === 'correctionTime') {
+            return formatDate(item[headers[key]])
+          } else if (headers[key] === 'formOfEmployment') {
+            const obj = EmployeeEnum.hireType.find(obj => obj.id === item[headers[key]])
+            return obj ? obj.value : '未知'
+          }
+          return item[headers[key]]
+        })
+      })
+      // return rows.map(item => Object.keys(headers).map(key => item[headers[key]]))
     }
   }
 }
