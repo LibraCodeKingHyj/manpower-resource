@@ -5,15 +5,15 @@
         <el-tabs>
           <el-tab-pane label="登录账户设置">
             <!-- 放置表单 -->
-            <el-form label-width="120px" style="margin-left: 120px; margin-top:30px">
-              <el-form-item label="姓名:">
-                <el-input style="width:300px" />
+            <el-form ref="userform" label-width="120px" :model="userInfo" style="margin-left: 120px; margin-top:30px" :rules="rules">
+              <el-form-item label="姓名:" prop="username">
+                <el-input v-model="userInfo.username" style="width:300px" />
               </el-form-item>
-              <el-form-item label="密码:">
-                <el-input style="width:300px" type="password" />
+              <el-form-item label="密码:" prop="password2">
+                <el-input v-model="userInfo.password2" style="width:300px" type="password" />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary">更新</el-button>
+                <el-button type="primary" @click="saveUser">更新</el-button>
               </el-form-item>
             </el-form>
           </el-tab-pane>
@@ -26,7 +26,38 @@
 </template>
 
 <script>
-export default {}
+import { getUserDetailById } from '@/api/user'
+import { saveUserDetailById } from '@/api/employees'
+export default {
+  data() {
+    return {
+      userId: this.$route.params.id,
+      userInfo: {
+        username: '',
+        password2: ''
+      },
+      rules: {
+        username: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
+        password2: [{ required: true, message: '密码不能为空', trigger: 'blur' },
+          { min: 6, max: 9, message: '密码长度6-9位', trigger: 'blur' }]
+      }
+    }
+  },
+  created() {
+    this.getUserDetailById()
+  },
+  methods: {
+    async getUserDetailById() {
+      this.userInfo = await getUserDetailById(this.userId)
+    },
+    saveUser() {
+      this.$refs.userform.validate().then(async() => {
+        await saveUserDetailById({ ...this.userInfo, password: this.userInfo.password2 })
+        this.$message.success('修改用户信息成功')
+      })
+    }
+  }
+}
 </script>
 
 <style scoped>
