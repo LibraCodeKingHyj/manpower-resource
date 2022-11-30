@@ -17,7 +17,9 @@
               </el-form-item>
             </el-form>
           </el-tab-pane>
-          <el-tab-pane label="个人详情" />
+          <el-tab-pane label="个人详情">
+            <component :is="UserComponent" />
+          </el-tab-pane>
           <el-tab-pane label="岗位信息" />
         </el-tabs>
       </el-card>
@@ -26,11 +28,16 @@
 </template>
 
 <script>
+import UserInfo from './components/userInfo.vue'
 import { getUserDetailById } from '@/api/user'
 import { saveUserDetailById } from '@/api/employees'
 export default {
+  components: {
+    UserInfo
+  },
   data() {
     return {
+      UserComponent: UserInfo,
       userId: this.$route.params.id,
       userInfo: {
         username: '',
@@ -52,6 +59,7 @@ export default {
     },
     saveUser() {
       this.$refs.userform.validate().then(async() => {
+        // password是加密后的所以需要将收集到的密码给层叠掉
         await saveUserDetailById({ ...this.userInfo, password: this.userInfo.password2 })
         this.$message.success('修改用户信息成功')
       })
