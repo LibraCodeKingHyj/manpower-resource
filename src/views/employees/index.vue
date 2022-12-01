@@ -25,6 +25,7 @@
                 :src="row.staffPhoto"
                 alt=""
                 style="border-radius: 50%; width: 100px; height: 100px; padding: 10px"
+                @click="showQrCode(row.staffPhoto)"
               >
             </template>
           </el-table-column>
@@ -79,10 +80,16 @@
       </el-card>
     </div>
     <AddEmployee :show-dialog.sync="showDialog" />
+    <el-dialog title="二位吗？" :visible.sync="showCodeDialog">
+      <el-row type="flex" justify="center">
+        <canvas ref="myCanVas" />
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import QrCode from 'qrcode'
 import { getEmployeeList, delEmployee } from '@/api/employees'
 import EmployeeEnum from '@/api/constant/employees'
 import AddEmployee from './components/addEmployee.vue'
@@ -100,7 +107,8 @@ export default {
         size: 10,
         total: 0 // 总数
       },
-      showDialog: false
+      showDialog: false,
+      showCodeDialog: false
     }
   },
   created() {
@@ -179,6 +187,17 @@ export default {
         })
       })
       // return rows.map(item => Object.keys(headers).map(key => item[headers[key]]))
+    },
+    showQrCode(url) {
+      if (url) {
+        this.showCodeDialog = true
+        // 页面的渲染是异步的 所以执行的时候还没有dom对象
+        this.$nextTick(() => {
+          QrCode.toCanvas(this.$refs.myCanVas, url)
+        })
+      } else {
+        this.$message.error('用户未上传头像')
+      }
     }
   }
 }
