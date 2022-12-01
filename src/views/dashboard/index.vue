@@ -2,6 +2,7 @@
   <div class="dashboard-container">
     <div class="dashboard-text">name: {{ name }}</div>
     <upload-excel />
+    <file-upload />
   </div>
 </template>
 

@@ -57,8 +57,7 @@
       <el-row class="inline-info">
         <el-col :span="12">
           <el-form-item label="员工头像">
-            <!-- 放置上传图片 -->
-
+            <FileUpload ref="staffPhoto" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -87,8 +86,8 @@
         </el-form-item>
         <!-- 个人头像 -->
         <!-- 员工照片 -->
-
         <el-form-item label="员工照片">
+          <FileUpload ref="myStaffPhoto" />
           <!-- 放置上传图片 -->
         </el-form-item>
         <el-form-item label="国家/地区">
@@ -363,17 +362,37 @@ export default {
   methods: {
     async getUserDetailById() {
       this.userInfo = await getUserDetailById(this.userId)
+      if (this.userInfo.staffPhoto?.trim()) {
+        // 有头像
+        this.$refs.staffPhoto.fileList = [{ url: this.userInfo.staffPhoto, upload: true }]
+      }
     },
-    async getPersonalDetail() {
+    async  getPersonalDetail() {
       this.formData = await getPersonalDetail(this.userId)
+      if (this.formData.staffPhoto) {
+        this.$refs.myStaffPhoto.fileList = [{ url: this.formData.staffPhoto, upload: true }]
+      }
     },
     async saveUser() {
-      await saveUserDetailById(this.userInfo)
+      const fileList = this.$refs.staffPhoto.fileList
+      if (fileList.some(item => !item.upload)) {
+        // 有图片上传没有完成
+        this.$message.warning('有照片没有上传完成')
+        return
+      }
+      // 因为空的时候也能保存所以需要判断为空的时候就上传一个空字符串
+      await saveUserDetailById({ ...this.userInfo, staffPhoto: fileList.length ? fileList[0].url : ' ' })
       this.$message.success('更新成功')
     },
     async savePersonal() {
-      await updatePersonal({ ...this.formData, id: this.userId })
-      this.$message.success('更新成功')
+      const fileList = this.$refs.myStaffPhoto.fileList
+      if (fileList.some(item => !item.upload)) {
+        //  如果此时去找 upload为false的图片 找到了说明 有图片还没有上传完成
+        this.$message.warning('您当前还有图片没有上传完成！')
+        return
+      }
+      await updatePersonal({ ...this.formData, staffPhoto: fileList && fileList.length ? fileList[0].url : '' })
+      this.$message.success('保存基础信息成功')
     }
   }
 }
