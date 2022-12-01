@@ -18,6 +18,16 @@
           <!-- sortable 排序按钮 -->
           <el-table-column label="序号" sortable="" type="index" />
           <el-table-column label="姓名" sortable="" prop="username" />
+          <el-table-column label="头像" align="center" width="120">
+            <template v-slot="{row}">
+              <img
+                v-imagerror="require('@/assets/common/logo.png')"
+                :src="row.staffPhoto"
+                alt=""
+                style="border-radius: 50%; width: 100px; height: 100px; padding: 10px"
+              >
+            </template>
+          </el-table-column>
           <el-table-column label="工号" sortable="" prop="workNumber" />
           <el-table-column label="手鸡号" sortable="" prop="mobile" />
           <el-table-column

@@ -16,10 +16,15 @@ const directives =
       // 会在当前的dom元素插入到节点之后执行
       inserted(dom, options) {
         // 当图片有地址，但是地址没有加载成功的时候，会触发一个错误事件 =>onerror
+        dom.src = dom.src || options.value
         dom.onerror = function() {
           // 图片加载错误
           dom.src = options.value
         }
+      },
+      // 在当前组件更新时作用到组件，数据执行完毕之后执行
+      componentUpdated(dom, options) {
+        dom.src = dom.src || options.value
       }
     }
   }
