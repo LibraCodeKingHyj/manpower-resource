@@ -34,7 +34,7 @@
               <el-table-column label="描述" prop="description" align="center" />
               <el-table-column label="操作" align="center">
                 <template v-slot="{ row }">
-                  <el-button size="small" type="success">分配权限</el-button>
+                  <el-button size="small" type="success" @click="assignPerm">分配权限</el-button>
                   <el-button size="small" type="primary" @click="editRole(row.id)">编辑</el-button>
                   <el-button
                     size="small"
@@ -121,6 +121,15 @@
         </el-col>
       </el-row>
     </el-dialog>
+    <el-dialog :visible="showPermDialog" title="分配权限">
+      <el-tree :data="permData" :props="defaultProps" show-checkbox :check-strictly="true" />
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col>
+          <el-button type="primary" size="small">确定</el-button>
+          <el-button size="small">取消</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -134,6 +143,8 @@
 */
 import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole, addRole } from '@/api/setting'
 import { mapGetters } from 'vuex'
+import { getPermissionList } from '@/api/permission'
+import { tranListToTreeData } from '@/utils'
 export default {
   data() {
     return {
@@ -151,7 +162,12 @@ export default {
       },
       rules: {
         name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }]
-      }
+      },
+      showPermDialog: false,
+      permData: [], // 树型弹窗的数据
+      defaultProps: {
+        label: 'name'
+      } // 展示的数据
     }
   },
   computed: {
@@ -222,6 +238,10 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    async assignPerm() {
+      this.permData = tranListToTreeData(await getPermissionList(), '0')
+      this.showPermDialog = true
     }
   }
 }
