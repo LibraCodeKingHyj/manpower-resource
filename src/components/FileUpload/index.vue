@@ -60,7 +60,7 @@ export default {
     },
     beforeUpload(file) {
       console.log(file)
-      const types = ['image/jpeg', 'image/gif', 'image/jpg', 'image/png']
+      const types = ['image/jpeg', 'image/gif', 'image/jpg', 'image/png', 'image/webp']
       // 检查文件类型
       if (!types.includes(file.type)) {
         this.$message.error('上传格式错误')

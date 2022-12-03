@@ -10,7 +10,7 @@ export default {
     component: () => import('@/views/departments'),
     meta: {
       title: '组织架构', // 使用title是因为左侧导航读取了这里的title属性
-      icon:'tree'
+      icon: 'tree'
     }
   }]
 }

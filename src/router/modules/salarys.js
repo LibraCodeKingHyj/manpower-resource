@@ -10,7 +10,7 @@ export default {
     component: () => import('@/views/salarys'),
     meta: {
       title: '工资', // 使用title是因为左侧导航读取了这里的title属性
-      icon:'money'
+      icon: 'money'
     }
   }]
 }

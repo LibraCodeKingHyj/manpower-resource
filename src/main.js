@@ -27,6 +27,9 @@ Object.keys(filters).forEach(key => {
   // 注册过滤器
   Vue.filter(key, filters[key])
 })
+// 注册打印的插件
+import Print from 'vue-print-nb'
+Vue.use(Print)
 Vue.config.productionTip = false
 import Component from '@/components'
 Vue.use(Component)

@@ -10,7 +10,7 @@ export default {
     component: () => import('@/views/permission'),
     meta: {
       title: '权限管理', // 使用title是因为左侧导航读取了这里的title属性
-      icon:'lock'
+      icon: 'lock'
     }
   }]
 }
