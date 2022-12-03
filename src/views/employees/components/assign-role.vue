@@ -38,9 +38,6 @@ export default {
       roleIds: [] // 所拥有的角色
     }
   },
-  created() {
-    this.getRoleList()
-  },
   methods: {
     async getRoleList() {
       const { total } = await getRoleList()
@@ -58,8 +55,8 @@ export default {
       this.$message.success('角色更新成功')
     },
     btnCancel() {
-      this.roleIds = [] // 清空原来的数组
       this.$emit('update:showRoleDialog', false)
+      this.roleIds = [] // 清空原来的数组
     }
   }
 }

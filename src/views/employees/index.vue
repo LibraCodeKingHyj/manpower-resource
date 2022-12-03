@@ -210,7 +210,8 @@ export default {
     },
     async editRole(id) {
       this.userId = id
-      await this.$refs.assignRole.getUserDetailById(id)
+      await this.$refs.assignRole?.getRoleList()
+      await this.$refs.assignRole?.getUserDetailById(id)
       this.showRoleDialog = true
     }
   }
