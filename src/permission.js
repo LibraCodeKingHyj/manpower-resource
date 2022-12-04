@@ -25,7 +25,12 @@ router.beforeEach(async(to, from, next) => {
       // 有token且不是登录页
       // 如果当前vuex中有用户的id 标识已经有资料了，就不用获取了 ，没有就获取
       if (!store.state.user.userInfo.userId) {
-        await store.dispatch('user/getUserInfo')
+        const { roles } = await store.dispatch('user/getUserInfo')
+        const routes = await store.dispatch('permission/filterRoutes', roles.menus)
+        // routes就是筛选得到的动态路由
+        // 执行完addrouter必须rosmiisionm
+        router.addRoutes(routes) // 添加动态路由到路由表
+        next(to.path)// 相当于跳到对应的地址， 相当于多条了一个路由，
       }
       // await后面的代码都是异步的 ，所以一定会等信息获取完成之后再执行next
       next()

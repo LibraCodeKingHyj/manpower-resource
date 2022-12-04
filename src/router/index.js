@@ -49,6 +49,7 @@ export const constantRoutes = [
       component: () => import('@/views/import')
     }]
   },
+  practiceRouter,
   // 404页面
   { path: '*', redirect: '/404', hidden: true }
 ]
@@ -61,14 +62,13 @@ export const asyncRoutes = [
   attendancesRouter,
   salarysRouter,
   settingRouter,
-  socialRouter,
-  practiceRouter
+  socialRouter
 ]
 // 实例化router
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: [...constantRoutes, ...asyncRoutes]
+  routes: [...constantRoutes]
 })
 
 const router = createRouter()

@@ -49,7 +49,7 @@ const actions = {
     const res = await getUserInfo() // 不包含头像信息
     const baseInfo = await getUserDetailById(res.userId) // 头像信息
     context.commit('setUserInfo', { ...res, ...baseInfo })
-    // return res // 为什么返回res 为了给后期做权限的时候用
+    return res // 为什么z返回res 为了给后期做权限的时候用
   },
   // 登出的action
   logout(context) {

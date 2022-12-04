@@ -34,7 +34,7 @@
               <el-table-column label="描述" prop="description" align="center" />
               <el-table-column label="操作" align="center">
                 <template v-slot="{ row }">
-                  <el-button size="small" type="success" @click="assignPerm">分配权限</el-button>
+                  <el-button size="small" type="success" @click="assignPerm(row.id)">分配权限</el-button>
                   <el-button size="small" type="primary" @click="editRole(row.id)">编辑</el-button>
                   <el-button
                     size="small"
@@ -121,12 +121,20 @@
         </el-col>
       </el-row>
     </el-dialog>
-    <el-dialog :visible="showPermDialog" title="分配权限">
-      <el-tree :data="permData" :props="defaultProps" show-checkbox :check-strictly="true" />
+    <el-dialog :visible="showPermDialog" title="分配权限" @close="btnPermCancel">
+      <el-tree
+        ref="permTree"
+        :data="permData"
+        :props="defaultProps"
+        :show-checkbox="true"
+        :check-strictly="true"
+        :default-checked-keys="selectCheck"
+        node-key="id"
+      />
       <el-row slot="footer" type="flex" justify="center">
         <el-col>
-          <el-button type="primary" size="small">确定</el-button>
-          <el-button size="small">取消</el-button>
+          <el-button type="primary" size="small" @click="btnPermOk">确定</el-button>
+          <el-button size="small" @click="btnPermCancel">取消</el-button>
         </el-col>
       </el-row>
     </el-dialog>
@@ -141,7 +149,7 @@
   :current-page="当前页码数"
   @current-change="页面变化的事件"
 */
-import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole, addRole } from '@/api/setting'
+import { getRoleList, getCompanyInfo, deleteRole, getRoleDetail, updateRole, addRole, assignPerm } from '@/api/setting'
 import { mapGetters } from 'vuex'
 import { getPermissionList } from '@/api/permission'
 import { tranListToTreeData } from '@/utils'
@@ -167,7 +175,9 @@ export default {
       permData: [], // 树型弹窗的数据
       defaultProps: {
         label: 'name'
-      } // 展示的数据
+      }, // 展示的数据
+      roleId: '',
+      selectCheck: []
     }
   },
   computed: {
@@ -239,9 +249,22 @@ export default {
         console.log(error)
       }
     },
-    async assignPerm() {
+    async assignPerm(id) {
       this.permData = tranListToTreeData(await getPermissionList(), '0')
+      this.roleId = id
+      const { permIds } = await getRoleDetail(id)
+      this.selectCheck = permIds // 选中回填
       this.showPermDialog = true
+    },
+    async btnPermOk() {
+      this.$refs.permTree.getCheckedKeys()
+      await assignPerm({ permIds: this.$refs.permTree.getCheckedKeys(), id: this.roleId })
+      this.$message.success('分配成功')
+      this.showPermDialog = false
+    },
+    btnPermCancel() {
+      this.selectCheck = []
+      this.showPermDialog = false
     }
   }
 }

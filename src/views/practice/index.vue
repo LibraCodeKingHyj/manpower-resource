@@ -1,182 +1,141 @@
 <template>
   <div class="dashboard-container">
     <div class="app-container">
+      <!-- 靠右的按钮 -->
       <el-card>
-        <el-row type="flex" justify="space-between" align="middle">
-          <el-col>
-            <el-input v-model="searchStr" placeholder="搜索" style="width:200px;margin-right:10px" size="small" />
-            <el-button type="primary" size="small" @click="search">搜索</el-button>
-            <el-button size="small" @click="reset">重置数据</el-button>
-            <el-button type="danger" size="small" @click="delSel">删除已选中</el-button>
-          </el-col>
-          <el-col>
-            <el-row type="flex" justify="end">
-              <el-button type="success" size="small">导入excel</el-button>
-              <el-button type="danger" size="small" @click="exportinfo">导出excel</el-button>
-              <el-button type="primary" size="small" @click="add">新增组员</el-button>
-            </el-row>
-          </el-col>
+        <el-row type="flex" justify="end">
+          <el-button type="primary" size="small" @click="addPerm(1,'0')">新增权限</el-button>
         </el-row>
-        <el-table :data="showInfo" @select="change">
-          <el-table-column type="selection" width="55" />
-          <el-table-column type="index" label="序号" width="120" />
-          <el-table-column prop="name" label="姓名" width="120" />
-          <el-table-column prop="gender" label="性别" width="120" />
-          <el-table-column prop="age" label="年龄" width="120" />
-          <el-table-column prop="mobile" label="手鸡号" width="120" />
-          <el-table-column>
-            <template v-slot="{row}">
-              <el-button type="success" size="small" @click="edit(row.id)">编辑</el-button>
-              <el-button type="danger" size="small" @click="del(row.id)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
       </el-card>
-      <el-dialog :title="showTitle" :visible="showDialog" center @close="btnCancel">
-        <el-form ref="form" label-width="120px" :model="form">
-          <el-form-item label="姓名" :rules="rules">
-            <el-input v-model="form.name" style="width:300px" />
+      <!-- 表格 -->
+      <el-table :data="list" row-key="id" border="">
+        <el-table-column label="名称" prop="name" />
+        <el-table-column label="标识" prop="code" align="center" />
+        <el-table-column label="描述" prop="description" align="center" />
+        <el-table-column label="操作" align="center">
+          <template v-slot="{row}">
+            <el-button type="text" @click="addPerm(2,row.id)">添加</el-button>
+            <el-button type="text" @click="editPerm(row.id)">编辑</el-button>
+            <el-button type="text" @click="delPerm(row.id)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 新增弹层 -->
+      <el-dialog title="编辑" :visible="showDialog" @close="btnCancel">
+        <el-form ref="perForm" label-width="120px" :rules="rules" :model="formData">
+          <el-form-item label="权限名称" prop="name">
+            <el-input v-model="formData.name" />
           </el-form-item>
-          <el-form-item label="性别">
-            <el-input v-model="form.gender" style="width:300px" />
+          <el-form-item label="权限标识" prop="code">
+            <el-input v-model="formData.code" />
           </el-form-item>
-          <el-form-item label="年龄">
-            <el-input v-model="form.age" style="width:300px" />
+          <el-form-item label="权限描述">
+            <el-input v-model="formData.description" />
           </el-form-item>
-          <el-form-item label="手鸡号">
-            <el-input v-model="form.mobile" style="width:300px" />
+          <el-form-item label="开启">
+            <el-switch
+              v-model="formData.enVisible"
+              active-value="1"
+              inactive-value="0"
+            />
           </el-form-item>
         </el-form>
-        <div slot="footer">
-          <el-button @click="btnCancel">取 消</el-button>
-          <el-button type="primary" @click="isOk">确 定</el-button>
-        </div>
+        <template #footer>
+          <el-row type="flex" justify="center">
+            <el-button size="small" type="primary" @click="btnOk">确定</el-button>
+            <el-button size="small" @click="btnCancel">取消</el-button>
+          </el-row>
+        </template>
       </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-// import _ from 'lodash'
+import { getPermissionList, delPermission, getPermissionDetail, updatePermission, addPermission } from '@/api/permission'
 export default {
   data() {
     return {
-      info: [
-        { id: '1', name: '胡英俊', gender: '男', age: 18, mobile: '18023162175', isSel: false },
-        { id: '2', name: '高卓军', gender: '男', age: 18, mobile: '18023162175', isSel: false },
-        { id: '3', name: '胡彦强', gender: '男', age: 18, mobile: '18023162175', isSel: false },
-        { id: '4', name: '武壮', gender: '男', age: 18, mobile: '18023162175', isSel: false },
-        { id: '5', name: '伍兆轩', gender: '男', age: 18, mobile: '18023162175', isSel: false },
-        { id: '6', name: '曹宏军', gender: '男', age: 18, mobile: '18023162175', isSel: false }
-      ],
-      form: {},
+      list: [],
       showDialog: false,
-      showTitle: '新增',
-      rules: {
-        name: [
-          { required: true }
-        ]
+      formData: {
+        name: '',
+        code: '',
+        description: '',
+        type: '', // 类型 该类型 不需要显示 因为点击添加的时候已经知道类型了
+        pid: '', // 因为做的是树 需要知道添加到哪个节点下了
+        enVisible: '0'
       },
-      searchStr: '',
-      showInfo: this.info
-    }
-  },
-  computed: {
-    filarr() {
-      if (this.searchStr) {
-        return this.info.filter((item) => {
-          return item.name.indexOf(this.searchStr) !== -1
-        })
-      } else {
-        return this.info
+      rules: {
+        name: [{ required: true, message: '权限名称不能为空', trigger: 'blur' }],
+        code: [{ required: true, message: '权限标识不能为空', trigger: 'blur' }]
       }
     }
   },
   created() {
-    this.showInfo = this.filarr
+    this.getPermissionList()
   },
   methods: {
-    async del(id) {
-      try {
-        await this.$confirm('Are you sure you want to delete this member?')
-        this.info = this.info.filter(item => item.id !== id)
-        this.$message.success('删除成功')
-      } catch (error) {
-        console.log(error)
-      }
-    },
-    edit(id) {
-      this.showTitle = '编辑'
-      this.showDialog = true
-      this.form = this.info.filter(item => item.id === id)[0]
-    },
-    isOk() {
-      if (this.form.id) {
-        this.info.forEach(item => {
-          if (item.id === this.form.id) {
-            item = this.form
-            this.$message.success('更新成功')
-            this.showDialog = false
+    trantree(list, id) {
+      const arr = []
+      list.forEach(item => {
+        if (item.pid === id) {
+          const children = this.trantree(list, item.id)
+          if (children.length) {
+            item.children = children
           }
-        })
+          arr.push(item)
+        }
+      })
+      return arr
+    },
+    async getPermissionList() {
+      this.list = this.trantree(await getPermissionList(), '0')
+    },
+    async editPerm(id) {
+      this.formData = await getPermissionDetail(id)
+      this.showDialog = true
+    },
+    delPerm(id) {
+      this.$confirm('确定删除吗？').then(async() => {
+        await delPermission(id)
+        this.$message.success('删除成功')
+        await this.getPermissionList()
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    addPerm(type, id) {
+      this.showDialog = true
+      this.formData.pid = id
+      this.formData.type = type
+    },
+    async btnOk() {
+      if (this.formData.id) {
+        await updatePermission(this.formData)
       } else {
-        const id = this.info[this.info.length - 1].id + 1
-        this.info.push({ ...this.form, id })
-        this.showDialog = false
+        await addPermission(this.formData)
       }
+      this.$message.success('操作成功')
+      this.getPermissionList()
+      this.showDialog = false
     },
     btnCancel() {
-      this.showDialog = false
-      this.form = {}
-      this.$refs.form.resetFields()
-    },
-    add() {
-      this.showDialog = true
-    },
-    search() {
-      this.showInfo = this.filarr
-      this.searchStr = ''
-    },
-    change(selection, row) {
-      row.isSel = !row.isSel
-    },
-    async delSel() {
-      await this.$confirm('确定删除选中的人员吗')
-      this.info = this.info.filter(item => item.isSel === false)
-      this.$message.success('删除成功')
-    },
-    exportinfo() {
-      const headers = {
-        '姓名': 'name',
-        '性别': 'gender',
-        '年龄': 'age',
-        '手鸡号': 'mobile'
+      this.formData = {
+        name: '',
+        code: '',
+        description: '',
+        type: '', // 类型 该类型 不需要显示 因为点击添加的时候已经知道类型了
+        pid: '', // 因为做的是树 需要知道添加到哪个节点下了
+        enVisible: '0'
       }
-      const multiHeader = [['47期第九组人员信息', '', '', '']]
-      const merges = ['A1:D1']
-      const data = this.info.map(item => {
-        return Object.values(headers).map(obj => {
-          return item[obj]
-        })
-      })
-      console.log(data)
-      import('@/vendor/Export2Excel').then(async excel => {
-        excel.export_json_to_excel({
-          header: Object.keys(headers),
-          data,
-          filename: '🎤🕺🏀🐔',
-          multiHeader, // 头部
-          merges // 合并 从左到右直接覆盖
-        })
-      })
-    },
-    reset() {
-      this.showInfo = this.info
+      this.$refs.perForm.resetFields()
+      this.showDialog = false
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>
