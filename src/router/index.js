@@ -49,9 +49,7 @@ export const constantRoutes = [
       component: () => import('@/views/import')
     }]
   },
-  practiceRouter,
-  // 404页面
-  { path: '*', redirect: '/404', hidden: true }
+  practiceRouter
 ]
 // 动态路由
 export const asyncRoutes = [

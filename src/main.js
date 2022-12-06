@@ -17,6 +17,8 @@ import '@/permission' // permission control
 
 // 注册全局自定义指令
 import '@/directives'
+import checkPermission from '@/mixin/checkPermission'
+Vue.mixin(checkPermission)
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明

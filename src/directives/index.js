@@ -10,6 +10,7 @@ import Vue from 'vue'
 //     }
 //   }
 // }
+import store from '@/store'
 const directives =
   {
     imagerror: {
@@ -25,6 +26,11 @@ const directives =
       // 在当前组件更新时作用到组件，数据执行完毕之后执行
       componentUpdated(dom, options) {
         dom.src = dom.src || options.value
+      }
+    },
+    check: {
+      inserted(dom, options) {
+        store.state.user.userInfo.roles.points.length
       }
     }
   }

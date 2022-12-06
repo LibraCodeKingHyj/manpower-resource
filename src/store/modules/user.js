@@ -1,5 +1,6 @@
 import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
 import { login, getUserInfo, getUserDetailById } from '@/api/user'
+import { resetRouter } from '@/router'
 const state = {
   token: getToken(), // 设置token ,初始化vuex的时候，从缓存中读取token
   userInfo: {} // 为什么定义空对象？ 为了防止在getters里面读info里面的变量时会报错
@@ -57,6 +58,11 @@ const actions = {
     context.commit('removeToken') // 不仅仅删除了vuex中的 还删除了缓存中的
     // 删除用户资料
     context.commit('removeUserInfo') // 删除用户信息
+    // 重置路由表
+    resetRouter()
+    // 设置权限模块下路由初始状态
+    // commit第三个参数为{root:true}
+    context.commit('permission/setRoutes', [], { root: true })
   }
 }
 export default {

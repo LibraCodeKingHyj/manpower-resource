@@ -29,7 +29,7 @@ router.beforeEach(async(to, from, next) => {
         const routes = await store.dispatch('permission/filterRoutes', roles.menus)
         // routes就是筛选得到的动态路由
         // 执行完addrouter必须rosmiisionm
-        router.addRoutes(routes) // 添加动态路由到路由表
+        router.addRoutes([...routes, { path: '*', redirect: '/404', hidden: true }]) // 添加动态路由到路由表
         next(to.path)// 相当于跳到对应的地址， 相当于多条了一个路由，
       }
       // await后面的代码都是异步的 ，所以一定会等信息获取完成之后再执行next
