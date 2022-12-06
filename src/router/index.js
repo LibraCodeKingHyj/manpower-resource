@@ -10,6 +10,7 @@ import salarysRouter from './modules/salarys'
 import settingRouter from './modules/setting'
 import socialRouter from './modules/social'
 import practiceRouter from './modules/practice'
+import userRouter from './modules/user'
 Vue.use(Router)
 
 /* Layout */
@@ -22,7 +23,6 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
   {
     path: '/404',
     component: () => import('@/views/404'),
@@ -49,6 +49,7 @@ export const constantRoutes = [
       component: () => import('@/views/import')
     }]
   },
+  userRouter,
   practiceRouter
 ]
 // 动态路由
