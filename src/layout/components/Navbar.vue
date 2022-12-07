@@ -13,6 +13,8 @@
     <!-- <breadcrumb class="breadcrumb-container" /> -->
 
     <div class="right-menu">
+      <lang class="right-menu-item" />
+      <screen-full class="right-menu-item" />
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img v-imagerror="defaultImg" :src="staffPhoto || defaultImg" class="user-avatar">
@@ -37,13 +39,15 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import lang from '@/components/lang'
 // import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
   components: {
     // Breadcrumb,
-    Hamburger
+    Hamburger,
+    lang
   },
   data() {
     return {
@@ -126,7 +130,7 @@ export default {
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
-      vertical-align: text-bottom;
+      vertical-align: middle;
 
       &.hover-effect {
         cursor: pointer;
@@ -178,4 +182,5 @@ export default {
 .user-dropdown {
   color: #fff;
 }
+
 </style>

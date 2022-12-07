@@ -1,6 +1,7 @@
 import PageTools from './PageTools'
 import UploadExcel from './uploadExcel'
 import FileUpload from './FileUpload'
+import ScreenFull from './ScreenFull'
 export default {
   // Vue.use的原理就是调用这个对象的install方法
   install(Vue) {
@@ -10,5 +11,6 @@ export default {
     Vue.component('UploadExcel', UploadExcel)
     // 上传图片
     Vue.component('FileUpload', FileUpload)
+    Vue.component('ScreenFull', ScreenFull)
   }
 }

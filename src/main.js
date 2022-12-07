@@ -29,6 +29,10 @@ Object.keys(filters).forEach(key => {
   // 注册过滤器
   Vue.filter(key, filters[key])
 })
+import i18n from '@/lang'
+Vue.use(ElementUI, {
+  i18n: (key, value) => i18n.t(key, value)
+})
 // 注册打印的插件
 import Print from 'vue-print-nb'
 Vue.use(Print)
@@ -39,6 +43,7 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   beforeCreate() {
     Vue.prototype.$bus = this // 事件总线
   },
